@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class MainManager : MonoBehaviour
 {
     public Brick BrickPrefab;
@@ -11,6 +12,8 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
+    public Button BackToMenuButton;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -36,6 +39,11 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        if(MenuManager.Instance.data.highScoreTable.Count != 0)
+        {
+            BestScoreText.text = "Best Score : " + MenuManager.Instance.data.highScoreTable[0].PlayerName + " " + MenuManager.Instance.data.highScoreTable[0].Score;
+        }
+        
     }
 
     private void Update()
@@ -65,12 +73,20 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
+        MenuManager.Instance.player.Score = m_Points;
         ScoreText.text = $"Score : {m_Points}";
     }
 
     public void GameOver()
     {
         m_GameOver = true;
+        MenuManager.Instance.AddToHighScore();
         GameOverText.SetActive(true);
+        BackToMenuButton.gameObject.SetActive(true);
+    }
+
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
